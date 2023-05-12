@@ -36,12 +36,12 @@ export class ChessElement extends LitElement {
             if (prop?.default !== undefined) this[k] = prop.default;
         }
         const name = this.localName.replace('lit-', '');
-        this.$url = `${urlCHESS.replace('chess-element.js', '')}${name}.js`;
+        this.$url = `${urlCHESS.replace('chess-element.mjs', '')}${name}.js`;
         console.log(this.$url);
         console.log(urlCHESS);
 
         this.$ulid = this.$ulid || CHESS.ulid();
-        if (this._useInfo) this.$urlInfo = `${urlCHESS.replace('chess-element.js', '')}/${name}/$info/$info.js`;
+        if (this._useInfo) this.$urlInfo = `${urlCHESS.replace('chess-element.mjs', '')}/${name}/$info/$info.js`;
     }
     connectedCallback() {
         super.connectedCallback();
@@ -234,7 +234,7 @@ class CCHESS {
         comp = comp || {};
         if (typeof comp === 'string') {
             comp = comp.replace('lit-', '');
-            let url = `${urlCHESS.replace('js/chess-element.js', '')}components/${comp}/${comp}.js`;
+            let url = `${urlCHESS.replace('js/chess-element.mjs', '')}components/${comp}/${comp}.js`;
             await import(url);
             const cmp = document.createElement(`lit-${comp}`);
             for (let p in props) cmp[p] = props[p];

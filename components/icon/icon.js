@@ -1,4 +1,4 @@
-import { ChessElement, css, svg } from '../../js/chess-element.js';
+import { ChessElement, css, svg } from '../../js/chess-element.mjs';
 
 import './icons/icons.js';
 
