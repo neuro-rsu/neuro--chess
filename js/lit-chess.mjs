@@ -23,10 +23,13 @@ class LitChess extends ChessElement {
             card2: { type: Object },
             solved: { type: Array, default: [] },
             end: { type: Boolean },
-            version: { type: String, default: '1.0.0', save: true, category: 'settings' }
+            version: { type: String, default: '1.0.0', save: true, category: 'settings' },
+            squares: {type: Array}
         }
     }
 
+    selectRow;
+    selectedCol;
     static get styles() {
         return [
             litChessStyles,
@@ -34,7 +37,7 @@ class LitChess extends ChessElement {
                 :host {
                     position: relative;
                     display: flex;
-                    flex-direction: column;
+                    flex-direction: column;cur
                     justify-content: center;
                     height: 100%;
                     box-sizing: border-box;
@@ -51,13 +54,22 @@ class LitChess extends ChessElement {
     constructor() {
         super();
         this.version = "1.0.0";
+        this.squares = [[new Set(['br']), new Set(['bn']), new Set(['bb']), new Set(['bq']), new Set(['bk']),  new Set(['bb']),  new Set(['bn']), new Set(['br'])],
+                        [new Set(['bp']), new Set(['bp']), new Set(['bp']), new Set(['bp']), new Set(['bp']),  new Set(['bp']),  new Set(['bp']), new Set(['bp'])],
+                        [new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set()],
+                        [new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set()],
+                        [new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set()],
+                        [new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set()],
+                        [new Set(['wp']), new Set(['wp']), new Set(['wp']), new Set(['wp']), new Set(['wp']),  new Set(['wp']),  new Set(['wp']), new Set(['wp'])],
+                        [new Set(['wr']), new Set(['wn']), new Set(['wb']), new Set(['wq']), new Set(['wk']),  new Set(['wb']),  new Set(['wn']), new Set(['wr'])]
+                    ]
     }
 
     render() {
         return html`
             <style>
                 .solved { opacity: ${this.end ? 1 : .3}; }
-                .cell-front, .cell-back { font-size: ${14 + this.fontSize - 100 <= 14 ? 14 : 14 + this.fontSize - 100}px; }
+                .square-front, .square-back { font-size: ${14 + this.fontSize - 100 <= 14 ? 14 : 14 + this.fontSize - 100}px; }
             </style>
             <header>
                 <div style="display: flex; flex-direction: column; flex: 1; width: 100%">
@@ -73,24 +85,23 @@ class LitChess extends ChessElement {
                 <chess-button name='screenshot' border='none' size=28 @click=${() => this.screenShort()} title='Скриншот' style='margin-right: 8px'></chess-button>
             </header>
             <div id="board" class='board'>
-                ${[...Array(+this.row).keys()].map(row => html`
+                ${this.squares.map((row, rowIndex) => html`
                     <div class='row'>
-                        ${[...Array(+this.column).keys()].map(column => {
-                            let idx = this.column * row + column;
+                        ${row.map((column, colIndex) => {
+                            let idx = 8 * rowIndex + colIndex;
+                            console.log(rowIndex, colIndex, idx);
                             return html`
-                                <div class='cell ${(this.solved.includes(idx) || idx === this.card1?.id || idx === this.card2?.id) ? 'selected' : ''} ${this.solved.includes(idx) ? 'solved' : ''}'
-                                        @click=${e => this.onclick(e, idx, this.cards?.[idx])}>
-                                    <div class='cell-inner'>
-                                        <div class='cell-front ${idx === this.odd ? 'odd' : ''}' style="color: hsla(${this.cards?.[idx]?.c || 0}, 60%, 50%, 1);">
-                                            ${html`
-                                                <img src=${this.cards?.[idx]?.v || this._url + 'images/chess.png'} style="width: 100%;max-height: 100%;">
-                                            `}
+                                <div class='square ${(rowIndex + colIndex) % 2 === 0 ? 'white-square' : 'black-square'}' @click=${e => this.onclick(e, idx, this.cards?.[idx])}>
+
+                                    <div class='square-inner'>
+                                        <div class='square-front ${[...this.squares[rowIndex][colIndex]].join(' ')}' draggable=${this.squares[rowIndex][colIndex].size !== 0}
+                                            @dragstart=${e => this.dragStart(e, rowIndex, colIndex)} @dragend=${e => this.dragEnd(e, rowIndex, colIndex)}
+                                            @dragenter=${e => this.dragEnter(e, rowIndex, colIndex)} @dragleave=${e => this.dragLeave(e, rowIndex, colIndex)}
+
                                         </div>
-                                        <div class='cell-back ${idx === this.odd ? 'odd' : ''}'>
-                                            ${idx === this.odd ? html`
-                                                <img src=${this._url + 'images/chess.png'} style="width: 100%;max-height: 100%;">
-                                            ` : html``}
-                                        </div>
+                                        <!-- <div class='square-front' @dragenter=${(e) => { this.squares[rowIndex][colIndex] = '1'; this.requestUpdate();}} this.classList.add('over');} @dragend=${(e) => { console.log('drag over', e);}}>
+                                            ${ column ? html` <img draggable="true"  @dragstart=${() => { console.log('start drag'); this.requestUpdate();}} @dragend=${() => console.log('stop drag')} src=${'images/pieces/classic/150/'+column+'.png'} style="width: 100%;max-height: 100%;"> `: ''}
+                                        </div> -->
                                     </div>
                                 </div>
                             `})}
@@ -106,24 +117,42 @@ class LitChess extends ChessElement {
         window.addEventListener('resize', () => CHESS.throttle('resize', () => this.fontSize = this._fontSize, 300), false);
     }
 
+    dragStart(e, rowIndex, colIndex) {
+        this.squares[rowIndex][colIndex].add('selected');
+        this.requestUpdate();
+    }
+
+    dragEnter(e, rowIndex, colIndex) {
+        if (this.squares[rowIndex][colIndex].size === 0) {
+            this.squares[rowIndex][colIndex].add((rowIndex + colIndex) % 2 === 0 ? 'white-over' : 'black-over');
+            this.requestUpdate();
+        }
+    }
+
+    dragEnd(e, rowIndex, colIndex) {
+        this.squares[rowIndex][colIndex].delete('selected');
+        this.requestUpdate();
+    }
+
+    dragLeave(e, rowIndex, colIndex) {
+        this.squares[rowIndex][colIndex].delete((rowIndex + colIndex) % 2 === 0 ? 'white-over' : 'black-over');
+        this.requestUpdate();
+    }
+
     updated(e) {
         if (e.has('row') || e.has('column')) {
             this.row = this.row < 2 ? 2 : this.row > 10 ? 10 : this.row;
             this.column = this.column < 2 ? 2 : this.column > 10 ? 10 : this.column;
         }
-        if (e.has('row') || e.has('column')) this.init();
+        //if (e.has('row') || e.has('column')) this.init();
     }
+
     get _url() { return this.$url.replace('js/chess.js', '') }
+
     get odd() { return (this.row * this.column) % 2 === 0 ? '' : Math.floor(this.row * this.column / 2) }
+
     get _fontSize() { return Math.min(this.$qs('#board').offsetWidth / this.column + this.column * 4, this.$qs('#board').offsetHeight / this.row + this.row * 4) }
 
-    // updated(e) {
-    //     if (e.has('row') || e.has('column')) {
-    //         this.row = this.row < 2 ? 2 : this.row > 10 ? 10 : this.row;
-    //         this.column = this.column < 2 ? 2 : this.column > 10 ? 10 : this.column;
-    //     }
-    //     if (e.has('row') || e.has('column')) this.init();
-    // }
     init() {
         this._confetti && clearInterval(this._confetti);
         this.fontSize = this._fontSize;
@@ -164,110 +193,68 @@ class LitChess extends ChessElement {
         this.isInit = false;
     }
     onclick(e, id, value) {
-        if (this.isInit) return;
-        if (id === this.odd) {
-            this.isInit = true;
-            if (this.solved?.length === 0 && this.card1 === undefined) {
-                this.init();
-            }
-            else {
-                this.card1 = this.card2 = undefined;
-                this.solved = [];
-                setTimeout(() => this.init(), 300);
-            }
-            return;
-        };
-        if (!this.autoClose && this.card1 && this.card2) this.card1 = this.card2 = undefined;
-        if (this.solved.includes(id) || this.card1?.id === id || value.v < 0) return;
-        this.clickEffect ||= new Audio(this._url + 'audio/click.mp3');
-        this.clickEffect.volume = 0.2;
-        this.clickEffect.play();
-        if (!this.card1) this.card1 = { id, value };
-        else if (!this.card2) {
-            this.card2 = { id, value };
-            if (this.card1.value.v === this.card2.value.v ) {
-                this.solved ||= [];
-                setTimeout(() => {
-                    if (this.card1 === undefined && this.card1 === undefined)
-                        return;
-                    ++this.isOk;
-                    this.solved.push(this.card1.id, this.card2.id);
-                    this.card1 = this.card2 = undefined;
-                    this.end = this.solved.length >= this.cards.length - (this.odd ? 2 : 0);
-                    if (this.end) {
-                        this.endEffect ||= new Audio(this._url + 'audio/end.mp3');
-                        this.endEffect.volume = 0.2;
-                        this.endEffect.play();
-                        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-                        this._confetti = setInterval(() => confetti({ angle: randomInRange(30, 150), spread: randomInRange(50, 70), particleCount: randomInRange(50, 100), origin: { y: .55 } }), 650);
-                        setTimeout(() => this._confetti && clearInterval(this._confetti), 2100);
-                    } else {
-                        this.okEffect ||= new Audio(this._url + 'audio/ok.mp3');
-                        this.okEffect.volume = 0.4;
-                        this.okEffect.play();
-                    }
-                }, this.timeToClose);
-            } else {
-                this.errEffect ||= new Audio(this._url + 'audio/error.mp3');
-                this.errEffect.volume = 0.1;
-                this.errEffect.play();
-                ++this.isError;
-                this.autoClose && setTimeout(() => this.card1 = this.card2 = undefined, this.timeToClose);
-            }
-        }
-        this.$update();
+        // if (this.isInit) return;
+        // if (id === this.odd) {
+        //     this.isInit = true;
+        //     if (this.solved?.length === 0 && this.card1 === undefined) {
+        //         this.init();
+        //     }
+        //     else {
+        //         this.card1 = this.card2 = undefined;
+        //         this.solved = [];
+        //         setTimeout(() => this.init(), 300);
+        //     }
+        //     return;
+        // };
+        // if (!this.autoClose && this.card1 && this.card2) this.card1 = this.card2 = undefined;
+        // if (this.solved.includes(id) || this.card1?.id === id || value.v < 0) return;
+        // this.clickEffect ||= new Audio(this._url + 'audio/click.mp3');
+        // this.clickEffect.volume = 0.2;
+        // this.clickEffect.play();
+        // if (!this.card1) this.card1 = { id, value };
+        // else if (!this.card2) {
+        //     this.card2 = { id, value };
+        //     if (this.card1.value.v === this.card2.value.v ) {
+        //         this.solved ||= [];
+        //         setTimeout(() => {
+        //             if (this.card1 === undefined && this.card1 === undefined)
+        //                 return;
+        //             ++this.isOk;
+        //             this.solved.push(this.card1.id, this.card2.id);
+        //             this.card1 = this.card2 = undefined;
+        //             this.end = this.solved.length >= this.cards.length - (this.odd ? 2 : 0);
+        //             if (this.end) {
+        //                 this.endEffect ||= new Audio(this._url + 'audio/end.mp3');
+        //                 this.endEffect.volume = 0.2;
+        //                 this.endEffect.play();
+        //                 function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+        //                 this._confetti = setInterval(() => confetti({ angle: randomInRange(30, 150), spread: randomInRange(50, 70), particleCount: randomInRange(50, 100), origin: { y: .55 } }), 650);
+        //                 setTimeout(() => this._confetti && clearInterval(this._confetti), 2100);
+        //             } else {
+        //                 this.okEffect ||= new Audio(this._url + 'audio/ok.mp3');
+        //                 this.okEffect.volume = 0.4;
+        //                 this.okEffect.play();
+        //             }
+        //         }, this.timeToClose);
+        //     } else {
+        //         this.errEffect ||= new Audio(this._url + 'audio/error.mp3');
+        //         this.errEffect.volume = 0.1;
+        //         this.errEffect.play();
+        //         ++this.isError;
+        //         this.autoClose && setTimeout(() => this.card1 = this.card2 = undefined, this.timeToClose);
+        //     }
+        // }
+        // this.$update();
     }
     neuroClick() {
         let cells = this.renderRoot.querySelectorAll(".cell");
         const id = Math.floor(Math.random() * cells.length);
         if (id != this.odd)
             cells[id].dispatchEvent(new CustomEvent("click", { bubbles: true, composed: true}));
-
-        //this.onclick(new CustomEvent("onclick", { bubbles: true, composed: true}), 0, this.cards?.[0])
-        // cells.forEach(item => {
-        //     item.dispatchEvent(new CustomEvent("click", { bubbles: true, composed: true}));
-        //     console.log(item);
-        // });
-
     }
 
     screenShort() {
-        html2canvas(document.querySelector('lit-chess')).then(function(canvas) {
 
-            const link = document.createElement('a');
-            link.download = 'download.png';
-            link.href = canvas.toDataURL();
-            link.click();
-            link.remove();
-
-            // var kMIMEType = "image/png";
-
-            // var blob = canvas.toBlobHD( callback, "image/png" );
-
-            // var a = document.createElement("a");
-            // document.body.appendChild(a);
-            // a.style.cssText = "display: none";
-
-            // // createObjectURL() will leak memory.
-            // var url = window.URL.createObjectURL(blob);
-            // a.href = url;
-            // a.download = 'my.png';
-            // a.click();
-            // window.URL.revokeObjectURL(url);
-
-            // a.parentNode.removeChild(a);
-
-            // document.body.appendChild(canvas);
-
-            // const link = document.createElement('a');
-            // link.download = 'download.png';
-            // link.href = canvas.toDataURL();
-            // link.click();
-            // link.delete;
-            // canvas.toBlob(function(blob) {
-            //      saveAs(blob, "Dashboard.png");
-            // });
-        });
     }
 }
 
