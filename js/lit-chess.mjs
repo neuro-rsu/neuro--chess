@@ -30,8 +30,8 @@ class LitChess extends ChessElement {
         }
     }
 
-    selectRow;
-    selectedCol;
+    rowStart;
+    colStart;
     static get styles() {
         return [
             litChessStyles,
@@ -92,7 +92,6 @@ class LitChess extends ChessElement {
                     <div class='row'>
                         ${row.map((column, colIndex) => {
                             let idx = 8 * rowIndex + colIndex;
-                            console.log(rowIndex, colIndex, idx);
                             return html`
                                 <div class='square ${(rowIndex + colIndex) % 2 === 0 ? 'white-square' : 'black-square'}' @click=${e => this.onclick(e, idx, this.cards?.[idx])}>
 
@@ -100,6 +99,7 @@ class LitChess extends ChessElement {
                                         <div class='square-front ${[...this.squares[rowIndex][colIndex]].join(' ')}' draggable=${this.squares[rowIndex][colIndex].size !== 0}
                                             @dragstart=${e => this.dragStart(e, rowIndex, colIndex)} @dragend=${e => this.dragEnd(e, rowIndex, colIndex)}
                                             @dragenter=${e => this.dragEnter(e, rowIndex, colIndex)} @dragleave=${e => this.dragLeave(e, rowIndex, colIndex)}
+                                            @dragover=${e => this.dragOver(e, rowIndex, colIndex)} @drop=${e => this.drop(e, rowIndex, colIndex)}>
 
                                         </div>
                                         <!-- <div class='square-front' @dragenter=${(e) => { this.squares[rowIndex][colIndex] = '1'; this.requestUpdate();}} this.classList.add('over');} @dragend=${(e) => { console.log('drag over', e);}}>
@@ -121,7 +121,10 @@ class LitChess extends ChessElement {
     }
 
     dragStart(e, rowIndex, colIndex) {
+        this.rowStart = rowIndex;
+        this.colStart = colIndex;
         this.squares[rowIndex][colIndex].add('selected');
+        //e.dataTransfer.effectAllowed = 'move';
         this.requestUpdate();
     }
 
@@ -132,6 +135,12 @@ class LitChess extends ChessElement {
         }
     }
 
+    dragOver(e, rowIndex, colIndex) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+    }
+
     dragEnd(e, rowIndex, colIndex) {
         this.squares[rowIndex][colIndex].delete('selected');
         this.requestUpdate();
@@ -139,6 +148,16 @@ class LitChess extends ChessElement {
 
     dragLeave(e, rowIndex, colIndex) {
         this.squares[rowIndex][colIndex].delete((rowIndex + colIndex) % 2 === 0 ? 'white-over' : 'black-over');
+        this.requestUpdate();
+    }
+
+    drop(e, rowIndex, colIndex) {
+        if (this.rowStart === rowIndex && this.colStart === colIndex) {
+            return;
+        }
+        this.squares[this.rowStart][this.colStart].delete('selected');
+        this.squares[rowIndex][colIndex].clear();
+        [this.squares[rowIndex][colIndex], this.squares[this.rowStart][this.colStart]] = [this.squares[this.rowStart][this.colStart], this.squares[rowIndex][colIndex]]
         this.requestUpdate();
     }
 
