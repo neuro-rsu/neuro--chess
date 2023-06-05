@@ -2,7 +2,9 @@ import { ChessElement, html, css } from './chess-element.mjs'
 
 import '../components/button/button.js';
 import '../components/icon/icon.js';
-import confetti from "https://cdn.skypack.dev/canvas-confetti";
+import '../components/forms/login-form.mjs';
+
+// import confetti from "https://cdn.skypack.dev/canvas-confetti";
 
 import { litChessStyles } from './lit-chess-css.mjs';
 
@@ -84,6 +86,7 @@ class LitChess extends ChessElement {
                 <chess-button name='face' border='none' size=28 @click=${() => this.neuroClick()} title='Нейросеть' style='margin-right: 8px'></chess-button>
                 <chess-button name='screenshot' border='none' size=28 @click=${() => this.screenShort()} title='Скриншот' style='margin-right: 8px'></chess-button>
             </header>
+            <login-form></login-form>
             <div id="board" class='board'>
                 ${this.squares.map((row, rowIndex) => html`
                     <div class='row'>
@@ -254,7 +257,7 @@ class LitChess extends ChessElement {
     }
 
     screenShort() {
-
+        this.renderRoot.querySelector("login-form").open();
     }
 }
 
