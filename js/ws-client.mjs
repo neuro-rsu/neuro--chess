@@ -7,21 +7,34 @@ const ws = new WebSocket(`ws://${location.hostname}:7000`);
 // }
 
 ws.onerror = function () {
-  showMessage('WebSocket error');
+  console.log(`WebSocket error`)
+  ws?.dialog?.show('WebSocket error')
 };
 
 ws.onopen = function () {
-  showMessage('WebSocket connection established');
+  console.log(`WebSocket connection established`)
+  ws?.dialog?.show(`WebSocket connection established`)
 };
 
 ws.onmessage = function(event) {
-  console.log(`[message] Данные получены с сервера: ${event.data}`);
-};
+  const msg = JSON.parse(event.data)
+  switch (msg.type) {
+    case "authError":
+      ws?.dialog?.show(`authError: ${msg.text}`)
+      console.log(`authError: ${msg.text}`)
+      break;
+    case "authOк":
+      ws?.dialog?.show(`authОк: ${msg.text}`)
+      console.log(`authОк: ${msg.text}`)
+      break;
+  }
+}
 
 ws.onclose = function () {
-  showMessage('WebSocket connection closed');
-  ws = null;
-};
+  console.log(`WebSocket connection closed`)
+  ws?.dialog?.show(`WebSocket connection closed`)
+  ws = null
+}
 
 function isObject(obj) {
   return obj && obj.constructor && obj.constructor === Object;
@@ -37,7 +50,18 @@ export function sendMessage(type, data) {
   if (!ws) {
     return;
   }
+  if (ws.readyState !== ws.OPEN) {
+    return;
+  }
   ws.send(JSON.stringify(msg));
 }
 
+export function setDialog(dialog) {
+  ws.oldDialog = ws.dialog
+  ws.dialog = dialog;
+}
+
+export function repairDialog() {
+  ws.dialog = ws.oldDialog
+}
 export default ws;

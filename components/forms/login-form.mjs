@@ -3,18 +3,17 @@ import { ChessElement, html, css } from '../../js/chess-element.mjs';
 
 import { formStyles } from './form-css.mjs'
 
-import { default as wsClient, sendMessage} from '../../js/ws-client.mjs'
+import { default as wsClient, sendMessage, setDialog, repairDialog} from '../../js/ws-client.mjs'
 
-sendMessage
-
+import '../dialogs/modal-dialog.mjs';
 
 class LoginForm extends ChessElement {
     static get properties() {
         return {
             version: { type: String, default: '1.0.0', save: true, category: 'settings' },
+            opened: { type: Boolean, default: false, category: 'settings' },
             login: { type: String, default: ''},
             password: {type: String, default: ''}
-
         }
     }
 
@@ -36,7 +35,7 @@ class LoginForm extends ChessElement {
 
     render() {
         return html`
-           <div id="form-background" class="form-background">
+           <div id="form-background" class="form-background" style="${this.opened ? 'display: block' : ''}">
             <modal-dialog></modal-dialog>
             <cancel-dialog></cancel-dialog>
             <close-dialog></close-dialog>
@@ -96,14 +95,25 @@ class LoginForm extends ChessElement {
         //     cells[id].dispatchEvent(new CustomEvent("click", { bubbles: true, composed: true}));
     }
     open() {
-        this.renderRoot.getElementById('form-background').style.display = "block";
+        this.opened = true;
+        setDialog(this.renderRoot.querySelector('modal-dialog'))
     }
     close() {
-        this.renderRoot.getElementById('form-background').style.display = "";
+        this.opened = false
+        repairDialog()
     }
 
     sendLogin() {
         sendMessage("login", {login: this.login, password: this.password})
+        //this.modalDialogShow();
+    }
+
+    async modalDialogShow() {
+        const dialog =  this.renderRoot.querySelector('modal-dialog');
+        let modalResult = await dialog.show("Подключение прошло удачно");
+        if (modalResult === "Ok") {
+            this.close();
+        }
     }
 
     updateLoginValue (e) {
