@@ -19,6 +19,8 @@ export const formStyles = css`
 
     /* --button-color: #04aa6d; */
     --button-color: var(--black-square-background-color);
+    --button-white-color: var(--white-square-background-color);
+
     /* --button-color: --black-square-background-color;#b58863 */
     --tab-color: #999;
     --tab-selected-color: #666;
@@ -184,6 +186,45 @@ button {
     cursor: pointer;
 }
 
+.button-king {
+    width: 150px;
+    height: 150px;
+    margin: 8px 0;
+    padding: 14px 20px;
+    border: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    background-color: inherit;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.button-king.white-king {
+    margin-right: 10px;
+    background-image: url('../../images/pieces/classic/150/wk.png');
+}
+
+.button-king.selected {
+    background-color: var(--button-white-color);
+}
+
+.button-king.black-king {
+    margin-left: 10px;
+    background-image: url('../../images/pieces/classic/150/bk.png')
+}
+
+.button-king.flash {
+    background-color: inherit;
+}
+
+.button-king:hover {
+    opacity: 1;
+    background-color: var(--button-white-color);
+}
+
+
 button:hover {
     opacity: 0.8;
 }
@@ -192,6 +233,10 @@ button:hover {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+}
+
+.footer-buttons.right {
+    justify-content: right;
 }
 
 .footer-button {
@@ -208,6 +253,14 @@ button:hover {
     flex-wrap: wrap;
     width: 100%;
     justify-content: start;
+}
+
+
+.king-select {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
 }
 
 .checkboxes-settings label {

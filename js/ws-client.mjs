@@ -6,6 +6,7 @@ const ws = new WebSocket(`ws://${location.hostname}:7000`);
 //   ws.close();
 // }
 
+
 ws.onerror = function () {
   console.log(`WebSocket error`)
   ws?.dialog?.show('WebSocket error')
@@ -27,6 +28,10 @@ ws.onmessage = function(event) {
       ws?.dialog?.show(`authОк: ${msg.text}`)
       console.log(`authОк: ${msg.text}`)
       break;
+    case "game":
+        ws?.form?.gameFound(msg)
+        console.log(`found: ${msg.text}`)
+        break;
   }
 }
 
@@ -61,7 +66,27 @@ export function setDialog(dialog) {
   ws.dialog = dialog;
 }
 
+export function setForm(form) {
+  ws.form = form
+}
+
 export function repairDialog() {
   ws.dialog = ws.oldDialog
 }
+
+export function addGame(game) {
+  ws.game = game
+}
+
+export function sendStep(step) {
+  let message = {
+    game: ws.game.game,
+    user: ws.game.kind ? ws.game.whiteUser: ws.game.blackUser,
+    enemy: !ws.game.kind ? ws.game.whiteUser: ws.game.blackUser,
+    step: step
+  }
+  sendMessage('step', message);
+}
+
+
 export default ws;

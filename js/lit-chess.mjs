@@ -3,6 +3,8 @@ import { ChessElement, html, css } from './chess-element.mjs'
 import '../components/button/button.js';
 import '../components/icon/icon.js';
 import '../components/forms/login-form.mjs';
+import '../components/forms/game-find-form.mjs';
+import { default as wsClient, sendMessage, setDialog, repairDialog, setForm, addGame, sendStep} from './ws-client.mjs'
 
 // import confetti from "https://cdn.skypack.dev/canvas-confetti";
 
@@ -83,10 +85,11 @@ class LitChess extends ChessElement {
                     </div>
                 </div>
                 <chess-button name='refresh' border='none' size=28 @click=${() => document.location.reload()} title='refresh' style='margin-right: 8px'></chess-button>
-                <chess-button name='face' border='none' size=28 @click=${() => this.neuroClick()} title='Нейросеть' style='margin-right: 8px'></chess-button>
+                <chess-button name='face' border='none' size=28 @click=${() => this.gameFind()} title='Нейросеть' style='margin-right: 8px'></chess-button>
                 <chess-button name='screenshot' border='none' size=28 @click=${() => this.screenShort()} title='Скриншот' style='margin-right: 8px'></chess-button>
             </header>
             <login-form></login-form>
+            <game-find-form></game-find-form>
             <div id="board" class='board'>
                 ${this.squares.map((row, rowIndex) => html`
                     <div class='row'>
@@ -159,6 +162,14 @@ class LitChess extends ChessElement {
         this.squares[rowIndex][colIndex].clear();
         [this.squares[rowIndex][colIndex], this.squares[this.rowStart][this.colStart]] = [this.squares[this.rowStart][this.colStart], this.squares[rowIndex][colIndex]]
         this.requestUpdate();
+        const step = {
+            piece: [...this.squares[rowIndex][colIndex]][0],
+            rowStart: this.rowStart,
+            colStart: this.colStart,
+            rowEnd: rowIndex,
+            colEnd: colIndex
+        }
+        sendStep(step)
     }
 
     updated(e) {
@@ -274,7 +285,9 @@ class LitChess extends ChessElement {
         if (id != this.odd)
             cells[id].dispatchEvent(new CustomEvent("click", { bubbles: true, composed: true}));
     }
-
+    gameFind() {
+        this.renderRoot.querySelector("game-find-form").open();
+    }
     screenShort() {
         this.renderRoot.querySelector("login-form").open();
     }
