@@ -32,6 +32,14 @@ ws.onmessage = function(event) {
         ws?.form?.gameFound(msg)
         console.log(`found: ${msg.text}`)
         break;
+    case "step":
+        ws?.gameForm?.step(msg)
+        console.log(`step: ${msg.text}`)
+        break;
+    case "enemyStep":
+        ws?.gameForm?.enemyStep(msg)
+        console.log(`step: ${msg.text}`)
+        break;
   }
 }
 
@@ -68,6 +76,10 @@ export function setDialog(dialog) {
 
 export function setForm(form) {
   ws.form = form
+}
+
+export function setGameForm(gameForm) {
+  ws.gameForm = gameForm
 }
 
 export function repairDialog() {

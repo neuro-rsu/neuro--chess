@@ -4,7 +4,7 @@ import '../components/button/button.js';
 import '../components/icon/icon.js';
 import '../components/forms/login-form.mjs';
 import '../components/forms/game-find-form.mjs';
-import { default as wsClient, sendMessage, setDialog, repairDialog, setForm, addGame, sendStep} from './ws-client.mjs'
+import { default as wsClient, sendMessage, setDialog, repairDialog, setForm, addGame, sendStep, setGameForm} from './ws-client.mjs'
 
 // import confetti from "https://cdn.skypack.dev/canvas-confetti";
 
@@ -121,8 +121,13 @@ class LitChess extends ChessElement {
         super.firstUpdated();
         setTimeout(() => this.init(), 100);
         window.addEventListener('resize', () => CHESS.throttle('resize', () => this.fontSize = this._fontSize, 300), false);
+        setGameForm(this)
     }
 
+    enemyStep() {
+
+    }
+    
     dragStart(e, rowIndex, colIndex) {
         this.rowStart = rowIndex;
         this.colStart = colIndex;
