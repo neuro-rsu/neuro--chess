@@ -25,8 +25,9 @@ ws.onmessage = function(event) {
       console.log(`authError: ${msg.text}`)
       break;
     case "authOк":
-      ws?.dialog?.show(`authОк: ${msg.text}`)
-      console.log(`authОк: ${msg.text}`)
+      // ws?.dialog?.show(`authOк: ${msg.text}`)
+      // console.log(`authOк: ${msg.text}`)
+      ws?.form?.authOk(msg)
       break;
     case "game":
         ws?.form?.gameFound(msg)

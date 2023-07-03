@@ -86,7 +86,7 @@ class LitChess extends ChessElement {
                 </div>
                 <chess-button name='refresh' border='none' size=28 @click=${() => document.location.reload()} title='refresh' style='margin-right: 8px'></chess-button>
                 <chess-button name='face' border='none' size=28 @click=${() => this.gameFind()} title='Нейросеть' style='margin-right: 8px'></chess-button>
-                <chess-button name='screenshot' border='none' size=28 @click=${() => this.screenShort()} title='Скриншот' style='margin-right: 8px'></chess-button>
+                <chess-button name='screenshot' border='none' size=28 @click=${() => this.login()} title='Подключиться' style='margin-right: 8px'></chess-button>
             </header>
             <login-form></login-form>
             <game-find-form></game-find-form>
@@ -124,10 +124,17 @@ class LitChess extends ChessElement {
         setGameForm(this)
     }
 
-    enemyStep() {
-
+        enemyStep(msg) {
+        const step = msg.data;
+        //this.squares[step.rowStart][step.rowStart].delete('selected');
+        //this.squares[step.rowStart][step.colStart].clear();
+        [this.squares[step.rowStart][step.colStart],
+        this.squares[step.rowEnd][step.colEnd]] =
+        [this.squares[step.rowEnd][step.colEnd],
+        this.squares[step.rowStart][step.colStart]]
+        this.requestUpdate();
     }
-    
+
     dragStart(e, rowIndex, colIndex) {
         this.rowStart = rowIndex;
         this.colStart = colIndex;
@@ -293,7 +300,7 @@ class LitChess extends ChessElement {
     gameFind() {
         this.renderRoot.querySelector("game-find-form").open();
     }
-    screenShort() {
+    login() {
         this.renderRoot.querySelector("login-form").open();
     }
 }

@@ -3,7 +3,7 @@ import { ChessElement, html, css } from '../../js/chess-element.mjs';
 
 import { formStyles } from './form-css.mjs'
 
-import { default as wsClient, sendMessage, setDialog, repairDialog} from '../../js/ws-client.mjs'
+import { default as wsClient, sendMessage, setDialog, repairDialog, setForm} from '../../js/ws-client.mjs'
 
 import '../dialogs/modal-dialog.mjs';
 
@@ -97,6 +97,7 @@ class LoginForm extends ChessElement {
     open() {
         this.opened = true;
         setDialog(this.renderRoot.querySelector('modal-dialog'))
+        setForm(this);
     }
     close() {
         this.opened = false
@@ -105,7 +106,15 @@ class LoginForm extends ChessElement {
 
     sendLogin() {
         sendMessage("login", {login: this.login, password: this.password})
-        //this.modalDialogShow();
+    }
+
+    async authOk(message) {
+        console.log(JSON.stringify(message))
+        const dialog =  this.renderRoot.querySelector('modal-dialog');
+        let modalResult = await dialog.show(message.text);
+        if (modalResult === "Ok") {
+            this.close();
+        }
     }
 
     async modalDialogShow() {
