@@ -3,6 +3,7 @@ import { ChessElement, html, css } from './chess-element.mjs'
 import '../components/button/button.js';
 import '../components/icon/icon.js';
 import '../components/forms/login-form.mjs';
+import '../components/forms/sign-up-form.mjs';
 import '../components/forms/game-find-form.mjs';
 import { default as wsClient, sendMessage, setDialog, repairDialog, setForm, addGame, sendStep, setGameForm} from './ws-client.mjs'
 
@@ -87,8 +88,10 @@ class LitChess extends ChessElement {
                 <chess-button name='refresh' border='none' size=28 @click=${() => document.location.reload()} title='refresh' style='margin-right: 8px'></chess-button>
                 <chess-button name='face' border='none' size=28 @click=${() => this.gameFind()} title='Нейросеть' style='margin-right: 8px'></chess-button>
                 <chess-button name='screenshot' border='none' size=28 @click=${() => this.login()} title='Подключиться' style='margin-right: 8px'></chess-button>
+                <chess-button name='signUp' border='none' size=28 @click=${() => this.signUp()} title='Зарегистрироваться' style='margin-right: 8px'></chess-button>
             </header>
             <login-form></login-form>
+            <sign-up-form></sign-up-form>
             <game-find-form></game-find-form>
             <div id="board" class='board'>
                 ${this.squares.map((row, rowIndex) => html`
@@ -302,6 +305,9 @@ class LitChess extends ChessElement {
     }
     login() {
         this.renderRoot.querySelector("login-form").open();
+    }
+    signUp() {
+        this.renderRoot.querySelector("sign-up-form").open();
     }
 }
 

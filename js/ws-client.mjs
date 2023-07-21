@@ -1,21 +1,21 @@
 
 const ws = new WebSocket(`ws://${location.hostname}:7000`);
 
-// if (ws) {
-//   ws.onerror = ws.onopen = ws.onclose = null;
-//   ws.close();
-// }
-
+ws.onopen = function () {
+  console.log(`WebSocket connection established`)
+  ws?.dialog?.show(`WebSocket connection established`)
+};
 
 ws.onerror = function () {
   console.log(`WebSocket error`)
   ws?.dialog?.show('WebSocket error')
 };
 
-ws.onopen = function () {
-  console.log(`WebSocket connection established`)
-  ws?.dialog?.show(`WebSocket connection established`)
-};
+ws.onclose = function () {
+  console.log(`WebSocket connection closed`)
+  ws?.dialog?.show(`WebSocket connection closed`)
+  ws = null
+}
 
 ws.onmessage = function(event) {
   const msg = JSON.parse(event.data)

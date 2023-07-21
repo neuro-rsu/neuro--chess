@@ -255,6 +255,20 @@ button:hover {
     justify-content: start;
 }
 
+.user-input-group-component {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.ev-f-person-add,
+.remove-red-eye {
+    position: absolute
+}
+
+.chess-icon {
+    left: 0px;
+}
 
 .king-select {
     display: flex;
@@ -273,6 +287,33 @@ button:hover {
 .checkboxes-settings label > input[type='checkbox']{
     margin-bottom: 10px;
 }
+
+.login-options {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkbox-remember {
+    display: inline-flex;
+    align-items: center;
+}
+
+.checkbox-remember input[type=checkbox]
+{
+    width: 20px;
+    height: 20px;
+    accent-color: var(--button-color);
+}
+
+.checkbox-remember label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
 
 /* Extra styles for the radioBox settings */
 .radio-boxes-settings {

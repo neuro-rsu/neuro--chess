@@ -7,9 +7,7 @@ import { default as wsClient, sendMessage, setDialog, repairDialog, setForm} fro
 
 import '../dialogs/modal-dialog.mjs';
 
-import '../input/input.mjs';
-
-class LoginForm extends ChessElement {
+class SignUpForm extends ChessElement {
     static get properties() {
         return {
             version: { type: String, default: '1.0.0', save: true, category: 'settings' },
@@ -26,14 +24,6 @@ class LoginForm extends ChessElement {
                 :host {
                     user-select: none;
                 }
-                .icon-font-2.user {
-                    color: red;
-                    font-family: FontAwesome;
-                }
-                .icon-font-2.user::before {
-                    font-family: FontAwesome;
-                    content:"\f001";
-                }
             `
         ]
     }
@@ -45,7 +35,6 @@ class LoginForm extends ChessElement {
 
     render() {
         return html`
-           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
            <div id="form-background" class="form-background" style="${this.opened ? 'display: block' : ''}">
             <modal-dialog></modal-dialog>
             <cancel-dialog></cancel-dialog>
@@ -70,26 +59,6 @@ class LoginForm extends ChessElement {
 
                         <label for="host"><b>Хост</b></label>
                         <input type="text" placeholder="http://example.com" name="host" required>
-
-                        <span class="icon-font-2 user">аволыаволаыв</span>
-                        <!-- <i class="fa fa-user" aria-hidden="true"></i> -->
-                        <chess-icon class="notoggled" icon="{}" name="face" fill="gray" size="28" scale="0.9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-icon>
-
-                        <chess-input type="text" placeholder="Логин" label="Пользователь" class="notoggled" icon="{}" name="face" fill="gray" size="28" scale="0.9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-input>
-
-                        <div class="user-input-group-component">
-                            <input type="email" id="username" name="_username" required="required" form-error-clear="" class="ui_v5-input-component ui_v5-input-group-space-left login-input" placeholder="Username or Email" autofocus="" aria-label="Username or Email" autocomplete="email">
-                            <chess-icon class="notoggled chess-icon ev-f-person-add" icon="{}" name="face" fill="gray" size="28" scale="0.9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-icon>
-                            <chess-icon class="notoggled chess-icon remove-red-eye" icon="{}" name="remove-red-eye" fill="gray" size="28" scale="0.9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-icon>
-                        </div>
-
-                        <div class="login-options">
-                            <div class="checkbox-remember">
-                                <input type="checkbox" name="remember">
-                                <label for="remember"><b>Remember me</b></label>
-                            </div>
-                            <a href="http://localhost/forgot" class="forgot-password" title="Forgot Password?">Forgot Password?</a>
-                        </div>
 
                         <label for="port"><b>Порт</b></label>
                         <input type="text" placeholder="Порт: 5984" name="port" required>
@@ -167,4 +136,4 @@ class LoginForm extends ChessElement {
     }
 }
 
-customElements.define("login-form", LoginForm);
+customElements.define("sign-up-form", SignUpForm);
