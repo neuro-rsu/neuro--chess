@@ -1,6 +1,7 @@
 import { ChessElement, html, css } from '../../js/chess-element.mjs';
 
-import '../icon/icon.js'
+import '../icon/icon.mjs'
+import '../button/button.mjs'
 
 import styles from './input-css.mjs'
 
@@ -82,13 +83,22 @@ class ChessInput extends ChessElement {
 
     get #icon() {
         return html`
-            <chess-icon class="icon" icon="{}" name="face" fill="gray" size="30" scale="9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-icon>
+            <chess-icon class="icon" icon="{}" name="lock" fill="${this.fill}" size="${this.size}" scale="1" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-icon>
         `
+    }
+
+    updateLoginValue() {
+        console.log("111");
     }
 
     get #button() {
         return html`
-            <chess-icon class="button" icon="{}" name="remove-red-eye" fill="gray" size="30" scale="9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-icon>
+            <chess-icon class="button" icon="{}" name="eye-regular" fill="${this.fill}" size="${this.size}" scale="1" rotate="0" speed="0" blink="0" blval="1;0;0;1" path="" @click=${this.updateLoginValue}></chess-icon>
+        `
+    }
+    get #button1() {
+        return html`
+            <chess-button class="button" icon="{}" name="remove-red-eye" fill="gray" size="30" scale="0.9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-button>
         `
     }
     render() {

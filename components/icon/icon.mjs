@@ -1,6 +1,6 @@
 import { ChessElement, css, svg } from '../../js/chess-element.mjs';
 
-import './icons/icons.js';
+import icons from './icons/icons.mjs';
 
 customElements.define('chess-icon', class ChessIcon extends ChessElement {
 
@@ -37,7 +37,7 @@ customElements.define('chess-icon', class ChessIcon extends ChessElement {
         if (!this.path && name && icons[name]) {
             this.path = icons[name].path;
             s = icons[name].size || 24;
-            this.viewbox = icons['viewbox'] || `0 0 ${s} ${s}`;
+            this.viewbox = icons[name]['viewbox'] || `0 0 ${s} ${s}`;
         }
         this._s2 = s / 2;
         this._isFirstUpdated = true;

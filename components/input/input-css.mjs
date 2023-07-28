@@ -45,7 +45,7 @@ input[type="number"] {
 .button {
     display: inline-block;
     position: absolute;
-    right: -35px
+    right: 5px
 }
 
 `;

@@ -1,6 +1,6 @@
 import { ChessElement, html, css } from '../../js/chess-element.mjs';
 
-import '../icon/icon.js'
+import '../icon/icon.mjs'
 
 customElements.define('chess-button', class ChessButton extends ChessElement {
     static get properties() {

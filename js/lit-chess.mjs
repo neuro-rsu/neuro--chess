@@ -1,7 +1,7 @@
 import { ChessElement, html, css } from './chess-element.mjs'
 
-import '../components/button/button.js';
-import '../components/icon/icon.js';
+import '../components/button/button.mjs';
+import '../components/icon/icon.mjs';
 import '../components/forms/login-form.mjs';
 import '../components/forms/sign-up-form.mjs';
 import '../components/forms/game-find-form.mjs';
