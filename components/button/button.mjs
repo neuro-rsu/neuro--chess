@@ -17,8 +17,8 @@ customElements.define('chess-button', class ChessButton extends ChessElement {
             width: { type: String, default: '' },
             height: { type: String, default: '' },
             swh: { type: String, default: '' },
-            border: { type: String, default: '1px' },
-            radius: { type: String, default: '2px' },
+            border: { type: String, default: '0px' },
+            radius: { type: String, default: '0px' },
             br: { type: String, default: '' },
             scale: { type: String, default: '0.9' },
             rotate: { type: Number, default: 0 },
@@ -28,6 +28,7 @@ customElements.define('chess-button', class ChessButton extends ChessElement {
             padding: { type: String, default: '' },
             toggledClass: { type: String, default: 'none' },
             notoggledClass: { type: String, default: 'notoggled' },
+            // toggled: { type: Boolean, default: false, reflect: true },
             toggled: { type: Boolean, default: false, reflect: true },
             path: { type: String, default: '' },
             icon: { type: Object, default: undefined }
@@ -110,21 +111,35 @@ customElements.define('chess-button', class ChessButton extends ChessElement {
         return html`<chess-icon class="${this.toggled ? this.toggledClass : this.notoggledClass}" icon=${_icon} name="${this.name}" fill="${this.fill}" size="${this.size}" scale="${this.scale}"
             rotate="${this.rotate}" speed="${this.speed}" blink="${this.blink}" blval="${this.blval}" path="${this.path}"></chess-icon>`;
     }
+    get #border() {
+        if (this.border === '0px') {
+            return '';
+        }
+        return ` border: ${this.border} solid ${this.borderColor || this.color || this.fill};`
+    }
+    get #borderRadius() {
+        if (this.radius==='0px') {
+            return '';
+        }
+        return ` border-radius: ${this.radius}`;
+
+    }
     render() {
         return html`
             <div id="chess-btn" class="chess-btn"  tabindex="0" style="
                     text-align: ${this.textAlign};
-                    width: ${this.width || this.size};
-                    height: ${this.height || this.size};
-                    border: ${this.border} solid ${this.borderColor || this.color || this.fill};
-                    border-radius: ${this.radius};
+                    width: ${this.width || this.size}px;
+                    height: ${this.height || this.size}px;
+                    this.#border
+                    #borderRadius
                     background-color: ${this.back};
                     overflow: hidden;
-                    padding: ${this.padding}"
+                    ${this.padding ? 'padding: ${this.padding}' : ''}"
                     @click="${() => this.toggled = !this.toggled}">
                 ${this.icon || this.name ? this._icon : ''}
                 <div style="color: ${this.color}; user-select: none; flex: 1">
                     ${this.label}
+                    ${this.toggled}
                     <slot></slot>
                 </div>
             </div>

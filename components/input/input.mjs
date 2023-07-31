@@ -93,12 +93,12 @@ class ChessInput extends ChessElement {
 
     get #button() {
         return html`
-            <chess-icon class="button" icon="{}" name="eye-regular" fill="${this.fill}" size="${this.size}" scale="1" rotate="0" speed="0" blink="0" blval="1;0;0;1" path="" @click=${this.updateLoginValue}></chess-icon>
+            <chess-icon class="button" icon="{}" name="eye-solid" fill="${this.fill}" size="${this.size}" scale="1" rotate="0" speed="0" blink="0" blval="1;0;0;1" toggled path="" @click=${this.updateLoginValue}></chess-icon>
         `
     }
     get #button1() {
         return html`
-            <chess-button class="button" icon="{}" name="remove-red-eye" fill="gray" size="30" scale="0.9" rotate="0" speed="0" blink="0" blval="1;0;0;1" path=""></chess-button>
+            <chess-button class="button" icon="{}" name="lock" fill="gray" size="30" scale="1" rotate="0" speed="0" blink="0" toggled blval="1;0;0;1" path=""></chess-button>
         `
     }
     render() {
@@ -111,7 +111,7 @@ class ChessInput extends ChessElement {
                     class=""
                     .value=${this.login} @change=${this.updateLoginValue}>
                 ${this.#icon}
-                ${this.#button}
+                ${this.#button1}
             </div>
         `;
     }
